@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ProductService.DAL.DTO
 {
-    public record ProductRequest(string ProductName, CategoryOptions Category,double? UnitPrice, int? QuantityInStock)
+    public record ProductAddRequest(string ProductName, CategoryOptions Category,double? UnitPrice, int? QuantityInStock)
     {
-     public ProductRequest():this(default,default,default,default)
+     public ProductAddRequest():this(default,default,default,default)
         {
         }
     }

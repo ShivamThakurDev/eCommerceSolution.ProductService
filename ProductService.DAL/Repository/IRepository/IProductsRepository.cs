@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProductService.BLL.Repository.IRepository
+namespace ProductService.DAL.Repository.IRepository
 {
     public interface IProductsRepository
     {

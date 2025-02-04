@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProductService.BLL.Repository.IRepository;
 using ProductService.DAL.Data;
 using ProductService.DAL.Model;
+using ProductService.DAL.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProductService.BLL.Repository
+namespace ProductService.DAL.Repository
 {
     public class ProductsRepository : IProductsRepository
     {

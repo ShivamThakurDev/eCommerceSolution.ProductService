@@ -1,40 +1,59 @@
+using FluentValidation.AspNetCore;
+using ProductService.API.APIEndpoints;
+using ProductService.API.Middleware;
+using ProductService.BLL;
+using ProductService.DAL;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
+//Add DAL and BLL services
+builder.Services.AddDataAccessLayer(builder.Configuration);
+builder.Services.AddBusinessLogicLayer();
+
+builder.Services.AddControllers();
+
+//FluentValidations
+builder.Services.AddFluentValidationAutoValidation();
+
+//Add model binder to read values from JSON to enum
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
+//Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Cors
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(builder => {
+        builder.WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    });
+});
+
+
 var app = builder.Build();
 
-//Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseExceptionHandlingMiddleware();
+app.UseRouting();
+//Cors
+app.UseCors();
 
+//Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
+
+
+//Auth
 app.UseHttpsRedirection();
+//Auth
+app.UseAuthentication();
+app.UseAuthorization();
 
-var summaries = new[]
-{
-    "Freezing","Bracing","Chilly","Cool","Mild","Warn","Balmy","Hot","Sweltering","Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast(
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-    )).ToArray();
-    return forecast;
-})
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+app.MapControllers();
+app.MapProductAPIEndpoints();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
